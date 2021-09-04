@@ -55,6 +55,10 @@ def _import_kubernetes(provider_config):
         KubernetesNodeProvider
     return KubernetesNodeProvider
 
+def _import_kubernetes_operator(provider_config):
+    from ray.autoscaler._private._kubernetes_operator.node_provider import \
+        KubernetesOperatorNodeProvider
+    return KubernetesOperatorNodeProvider
 
 def _import_staroid(provider_config):
     from ray.autoscaler._private.staroid.node_provider import \
@@ -78,6 +82,10 @@ def _load_kubernetes_defaults_config():
     return os.path.join(
         os.path.dirname(ray_kubernetes.__file__), "defaults.yaml")
 
+def _load_kubernetes_operator_defaults_config():
+    import ray.autoscaler.kubernetes_operator as ray_kubernetes_operator
+    return os.path.join(
+        os.path.dirname(ray_kubernetes_operator.__file__), "defaults.yaml")
 
 def _load_aws_defaults_config():
     import ray.autoscaler.aws as ray_aws
@@ -116,6 +124,7 @@ _NODE_PROVIDERS = {
     "azure": _import_azure,
     "staroid": _import_staroid,
     "kubernetes": _import_kubernetes,
+    "kubernetes_operator": _import_kubernetes_operator,
     "aliyun": _import_aliyun,
     "external": _import_external  # Import an external module
 }
@@ -127,10 +136,12 @@ _PROVIDER_PRETTY_NAMES = {
     "azure": "Azure",
     "staroid": "Staroid",
     "kubernetes": "Kubernetes",
+    "kubernetes_operator": "Kubernetes_Operator",
     "aliyun": "Aliyun",
     "external": "External"
 }
 
+# TODO: does external provider needs any configuration settings? 
 _DEFAULT_CONFIGS = {
     "local": _load_local_defaults_config,
     "aws": _load_aws_defaults_config,
@@ -139,6 +150,7 @@ _DEFAULT_CONFIGS = {
     "staroid": _load_staroid_defaults_config,
     "aliyun": _load_aliyun_defaults_config,
     "kubernetes": _load_kubernetes_defaults_config,
+    "kubernetes_operator": _load_kubernetes_operator_defaults_config,
 }
 
 
