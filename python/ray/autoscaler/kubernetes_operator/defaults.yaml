@@ -26,7 +26,7 @@ provider:
     use_internal_ips: true
 
     # Namespace to use for all resources created.
-    namespace: ray
+    namespace: ray-system
 
     # ServiceAccount created by the autoscaler for the head node pod that it
     # runs in. If this field isn't provided, the head pod config below must

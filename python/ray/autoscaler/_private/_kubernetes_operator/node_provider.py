@@ -132,7 +132,7 @@ class KubernetesOperatorNodeProvider(NodeProvider):
 
         # Challenge: How to get node_config and map to workerNodeSpec???
         # Same problem: min/max validation here?
-        exist_cluster["spec"]["workerGroupsSpec"][0].replicas += count
+        exist_cluster["spec"]["workerNodeSpec"][0]["replicas"] += count
         body = exist_cluster
         logger.info(log_prefix + "calling patch_namespaced_custom_object")
         custom_objects_api().patch_namespaced_custom_object(
@@ -143,7 +143,7 @@ class KubernetesOperatorNodeProvider(NodeProvider):
             name=self.cluster_name,
             body=body)
 
-$       # Note(Jeffwan@): Rest are not needed as well. Operator does have node template. 
+        # Note(Jeffwan@): Rest are not needed as well. Operator does have node template.
         # What we need to do is to update RayCluster, which workerGroupSepc should we scale up.
         # If we determine to support `ray up`, then we have to handle RayCluster creation here.
 
@@ -249,10 +249,10 @@ $       # Note(Jeffwan@): Rest are not needed as well. Operator does have node t
 
             # node_ids may come from different node groups. We need to iterate every
             # workerGroupSpec and update the scaleStrategy
-            workerGroupSpecs = exist_cluster['spec']['workerGroupsSpec']
+            workerGroupSpecs = exist_cluster['spec']['workerNodeSpec']
             # Only support one worker group at this moment.
             workerGroupSpec = workerGroupSpecs[0]
-            workerGroupSpec.scaleStrategy.workersToDelete = node_ids
+            workerGroupSpec["scaleStrategy"]["workersToDelete"] = node_ids
  
 
             # extensions = exist_cluster['spec']['extensions']
@@ -267,7 +267,7 @@ $       # Note(Jeffwan@): Rest are not needed as well. Operator does have node t
             #         desired_extensions.append(extension)
             # exist_cluster['spec']['extensions'] = desired_extensions
 
-            exist_cluster['spec']['workerGroupsSpec'][0] = workerGroupSpec
+            exist_cluster['spec']['workerNodeSpec'][0] = workerGroupSpec
             logger.info(log_prefix + "calling replace_namespaced_custom_object"
                         " in terminate_nodes")
 
